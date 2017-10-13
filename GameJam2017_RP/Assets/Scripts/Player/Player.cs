@@ -21,8 +21,11 @@ public class Player : MonoBehaviour {
     public LayerMask m_LadderLayer;
     public Transform m_groundCheck;
     public float m_groundRadius = 0.2f;
+    public GameObject m_graphics;
+    public Vector2 m_wallCollider;
+    public float m_wallColliderOffst;
     //////////////////////////////////////////
-    
+
     //////////////////////////////////////////
     // Private Variables
     private Rigidbody2D m_rigidbody2D;
@@ -31,27 +34,25 @@ public class Player : MonoBehaviour {
     private bool m_collidingRight = false;
     private bool m_collidingLeft = false;
     private bool m_collidingLadder = false;
+    private bool m_fliped = false;
     private float move;
     //////////////////////////////////////////
 
 
 
     void Start() {
+        // Get the rigidbody
         m_rigidbody2D = this.GetComponent<Rigidbody2D>();
     }
-
+     
     void Update() {
-        if (m_arm != null) {
-            //m_arm.transform.Rotate(Input.mousePosition);
-        }
-
         //////////////////////////////////////////
         // Player Movement
 
         //* ---- Movement ---- */
         m_grounded = Physics2D.OverlapCircle(m_groundCheck.position, m_groundRadius, m_groundLayer);
-        m_collidingRight = Physics2D.OverlapCircle((m_groundCheck.right * 0.7f) + transform.position, 0.2f, m_wallLayer);
-        m_collidingLeft = Physics2D.OverlapCircle((-m_groundCheck.right * 0.7f) + transform.position, 0.2f, m_wallLayer);
+        m_collidingRight = Physics2D.OverlapBox((m_groundCheck.right * m_wallColliderOffst) + transform.position, m_wallCollider, 0, m_wallLayer);
+        m_collidingLeft = Physics2D.OverlapBox((-m_groundCheck.right * m_wallColliderOffst) + transform.position, m_wallCollider, 0, m_wallLayer);
         m_collidingLadder = Physics2D.OverlapCircle(m_groundCheck.position, m_groundRadius, m_LadderLayer);
         // Get movement
         move = Input.GetAxis("Horizontal");
@@ -89,8 +90,16 @@ public class Player : MonoBehaviour {
         float angle = Mathf.Atan2(mouse_pos.y, mouse_pos.x) * Mathf.Rad2Deg;
         m_arm.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 90));
 
-        
-        /* ---- Jumping ---- */
+        /* ---- Player Flipping ---- */
+        for (int i = 0; i < m_graphics.transform.childCount; i++) {
+            if (angle < 90 && angle > -90) {
+                m_graphics.transform.GetChild(i).GetComponent<SpriteRenderer>().flipX = m_fliped = false;
+            } else {
+                m_graphics.transform.GetChild(i).GetComponent<SpriteRenderer>().flipX = m_fliped = true;
+            }
+        }
+
+            /* ---- Jumping ---- */
         if (Input.GetKeyDown(KeyCode.Space)) { // JUMP
             if (m_grounded) m_rigidbody2D.AddForce(transform.up * m_jumpheight, ForceMode2D.Impulse);
         }
@@ -103,7 +112,14 @@ public class Player : MonoBehaviour {
         Gizmos.DrawWireSphere(m_groundCheck.position, m_groundRadius);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere((m_groundCheck.right * 0.7f) + transform.position, 0.2f);
-        Gizmos.DrawWireSphere((-m_groundCheck.right * 0.7f) + transform.position, 0.2f);
+        Gizmos.DrawWireCube((m_groundCheck.right * m_wallColliderOffst) + transform.position, new Vector3(m_wallCollider.x, m_wallCollider.y, 0));
+        Gizmos.DrawWireCube((-m_groundCheck.right * m_wallColliderOffst) + transform.position, new Vector3(m_wallCollider.x, m_wallCollider.y, 0));
+
+        Gizmos.color = Color.green;
+        if (m_fliped) {
+            Gizmos.DrawLine(m_groundCheck.position, (-m_groundCheck.right * 0.7f) + transform.position);
+        } else {
+            Gizmos.DrawLine(m_groundCheck.position, (m_groundCheck.right * 0.7f) + transform.position);
+        }
     }
 }
