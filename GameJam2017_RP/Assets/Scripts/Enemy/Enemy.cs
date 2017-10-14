@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
 {
     // variables [public]
     public float m_speed = 3.0f;
+    public float m_damage = 25.0f;
     public float m_health = 100.0f;
     public bool m_collisionResult = false;
     public float m_collisonRadius = 0.5f;
@@ -39,8 +40,6 @@ public class Enemy : MonoBehaviour
         }
 	}
 
-
-
     void OnValidate()
     {
         // initialize variables [public]
@@ -57,5 +56,14 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(new Vector3(m_collisonOffsetX, m_collisonOffsetY, 0) + transform.position, m_collisonRadius);
         Gizmos.color = m_moveDirection < 0 ? Color.red : Color.magenta;
         Gizmos.DrawWireSphere(new Vector3(-m_collisonOffsetX, m_collisonOffsetY, 0) + transform.position, m_collisonRadius);
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.tag == "Bullet")
+        {
+            m_health -= m_damage;
+            if (m_health <= 0.0f) Destroy(gameObject);
+        }
     }
 }
