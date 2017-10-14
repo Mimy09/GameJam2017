@@ -1,6 +1,7 @@
 ﻿//////////////////////////////////////////
 // Includes
 using UnityEngine;
+using UnityEngine.SceneManagement;
 //////////////////////////////////////////
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -60,11 +61,15 @@ public class Player : MonoBehaviour {
         // Player Movement
 
         if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_water)) {
-            if (angle > 110 || angle < 70) {
+            if (angle < 110 && angle > 70) {
                 if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
+            } else {
+                m_health -= m_healthWaterDamage * Time.deltaTime;
             }
         }
-
+        if (m_health <= 0) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
         //* ---- Movement ---- */
         m_grounded = Physics2D.OverlapCircle(m_groundCheck.position, m_groundRadius, m_groundLayer);
         m_collidingRight = Physics2D.OverlapBox((m_groundCheck.right * m_wallColliderOffst) + transform.position, m_wallCollider, 0, m_wallLayer);
