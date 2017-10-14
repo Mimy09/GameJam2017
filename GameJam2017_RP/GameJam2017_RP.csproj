@@ -86,6 +86,8 @@
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Player\Weapon.cs" />
     <Compile Include="Assets\Scripts\SnapObjectToGrid.cs" />
+    <Compile Include="Assets\Scripts\Stage\Bucket.cs" />
+    <Compile Include="Assets\Scripts\Stage\Door.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
