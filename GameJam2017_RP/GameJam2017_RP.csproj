@@ -82,6 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Events\Event.cs" />
+    <Compile Include="Assets\Scripts\Events\EventAction.cs" />
+    <Compile Include="Assets\Scripts\Events\EventListener.cs" />
     <Compile Include="Assets\Scripts\Player\Bullet.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Player\Weapon.cs" />
