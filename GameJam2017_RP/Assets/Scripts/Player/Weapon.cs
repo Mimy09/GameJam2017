@@ -53,7 +53,7 @@ public class Weapon : MonoBehaviour {
     }
 
     void OnGUI() {
-        GUI.Label(new Rect(10, 10, 100, 100), "Ammo: " + Mathf.RoundToInt(m_ammo));
+        GUI.Label(new Rect(10, 10, 100, 100), "Ammo: " + Mathf.CeilToInt(m_ammo));
     }
 
     void OnDrawGizmos() {

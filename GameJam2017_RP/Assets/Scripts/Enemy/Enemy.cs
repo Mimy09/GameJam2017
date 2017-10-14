@@ -58,12 +58,15 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(new Vector3(-m_collisonOffsetX, m_collisonOffsetY, 0) + transform.position, m_collisonRadius);
     }
 
-    void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.tag == "Bullet")
-        {
-            m_health -= m_damage;
-            if (m_health <= 0.0f) Destroy(gameObject);
+    void OnTriggerEnter2D(Collider2D collider) {
+        switch (collider.tag) {
+            case "Bullet":
+                m_health -= m_damage;
+                if (m_health <= 0.0f) Destroy(gameObject);
+                break;
+            case "Player":
+                collider.GetComponent<Player>().m_health = 0;
+                break;
         }
     }
 }

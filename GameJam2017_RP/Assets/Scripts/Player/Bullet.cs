@@ -13,7 +13,9 @@ public class Bullet : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D c) {
         if (c.tag != "Player") {
             if (c.tag != "Water") {
-                Destroy(this.gameObject);
+                if (c.tag != "Bullet") {
+                    Destroy(this.gameObject);
+                }
             }
         }
     }
