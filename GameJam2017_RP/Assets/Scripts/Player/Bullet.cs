@@ -14,7 +14,9 @@ public class Bullet : MonoBehaviour {
         if (c.tag != "Player") {
             if (c.tag != "Water") {
                 if (c.tag != "Bullet") {
-                    Destroy(this.gameObject);
+                    if (c.tag != "Door") {
+                        Destroy(this.gameObject);
+                    }
                 }
             }
         }

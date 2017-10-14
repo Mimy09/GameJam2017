@@ -48,6 +48,7 @@ public class Door : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D collider)
     {
+        if (collider.tag != "Player") return;
         // check if unlocked
         if (!m_isUnlocked || !m_isOpen) return;
         // set boolean
@@ -61,6 +62,7 @@ public class Door : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.tag != "Player") return;
         // check if unlocked
         if (!m_isUnlocked || m_isOpen) return;
         // set boolean

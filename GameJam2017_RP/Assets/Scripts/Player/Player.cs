@@ -21,15 +21,20 @@ public class Player : MonoBehaviour {
     public int m_speed = 1;
     public int m_ladderSpeed = 10;
     public float m_jumpheight = 1;
+    public float m_damageVelocity = 35;
     public LayerMask m_groundLayer;
     public LayerMask m_wallLayer;
     public LayerMask m_LadderLayer;
     public LayerMask m_water;
+    public LayerMask m_toxicWater;
+    public LayerMask m_toxicWaterPool;
     public Transform m_groundCheck;
     public float m_groundRadius = 0.2f;
     public GameObject m_graphics;
     public Vector2 m_wallCollider;
     public float m_wallColliderOffst;
+
+    public RectTransform m_healthBar;
     //////////////////////////////////////////
 
     //////////////////////////////////////////
@@ -60,16 +65,27 @@ public class Player : MonoBehaviour {
         //////////////////////////////////////////
         // Player Movement
 
-        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_water)) {
-            if (angle < 110 && angle > 70) {
-                if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
-            } else {
-                m_health -= m_healthWaterDamage * Time.deltaTime;
-            }
+        m_healthBar.sizeDelta = new Vector2((231.0f / 100) * m_health, 59);
+
+        //  Damage / restart scene
+        if (Physics2D.OverlapCircle(m_groundCheck.position - transform.up * 1.5f, m_groundRadius) && m_rigidbody2D.velocity.y < m_damageVelocity) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         if (m_health <= 0) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_toxicWaterPool)) {
+            m_health -= m_healthWaterDamage * Time.deltaTime;
+        }
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_toxicWater)) {
+            if (angle < 110 && angle > 70) {
+            if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
+            } else {
+                m_health -= m_healthWaterDamage * Time.deltaTime;
+            }
+        }
+
         //* ---- Movement ---- */
         m_grounded = Physics2D.OverlapCircle(m_groundCheck.position, m_groundRadius, m_groundLayer);
         m_collidingRight = Physics2D.OverlapBox((m_groundCheck.right * m_wallColliderOffst) + transform.position, m_wallCollider, 0, m_wallLayer);
@@ -144,14 +160,10 @@ public class Player : MonoBehaviour {
 
         //////////////////////////////////////////
     }
-
-    void OnGUI() {
-        GUI.Label(new Rect(10, 50, 100, 100), "Health: " + Mathf.RoundToInt(m_health));
-    }
-
     void OnDrawGizmos() {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(m_groundCheck.position, m_groundRadius);
+        Gizmos.DrawWireSphere(m_groundCheck.position - transform.up * 1.5f, m_groundRadius);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube((m_groundCheck.right * m_wallColliderOffst) + transform.position, new Vector3(m_wallCollider.x, m_wallCollider.y, 0));
