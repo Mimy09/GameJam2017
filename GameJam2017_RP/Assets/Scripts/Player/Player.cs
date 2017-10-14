@@ -27,6 +27,7 @@ public class Player : MonoBehaviour {
     public LayerMask m_LadderLayer;
     public LayerMask m_water;
     public LayerMask m_toxicWater;
+    public LayerMask m_toxicWaterPool;
     public Transform m_groundCheck;
     public float m_groundRadius = 0.2f;
     public GameObject m_graphics;
@@ -74,9 +75,12 @@ public class Player : MonoBehaviour {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_toxicWaterPool)) {
+            m_health -= m_healthWaterDamage * Time.deltaTime;
+        }
         if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_toxicWater)) {
             if (angle < 110 && angle > 70) {
-                if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
+            if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
             } else {
                 m_health -= m_healthWaterDamage * Time.deltaTime;
             }
