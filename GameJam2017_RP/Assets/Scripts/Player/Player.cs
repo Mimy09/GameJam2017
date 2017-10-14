@@ -13,6 +13,9 @@ public class Player : MonoBehaviour {
     public GameObject m_arm;
     public GameObject m_body;
 
+    public float m_health = 100;
+    public float m_healthWaterDamage = 10;
+
     /* ---- Player Movement Vars ---- */
     public int m_speed = 1;
     public int m_ladderSpeed = 10;
@@ -20,6 +23,7 @@ public class Player : MonoBehaviour {
     public LayerMask m_groundLayer;
     public LayerMask m_wallLayer;
     public LayerMask m_LadderLayer;
+    public LayerMask m_water;
     public Transform m_groundCheck;
     public float m_groundRadius = 0.2f;
     public GameObject m_graphics;
@@ -38,11 +42,10 @@ public class Player : MonoBehaviour {
     private bool m_collidingLadder = false;
     private bool m_fliped = false;
     private float move;
-    private float angle;
+    public float angle;
     //////////////////////////////////////////
 
-    public float ArmAngle
-    {
+    public float ArmAngle {
         get { return angle; }
     }
 
@@ -51,10 +54,16 @@ public class Player : MonoBehaviour {
         m_rigidbody2D = this.GetComponent<Rigidbody2D>();
         m_animator = m_body.GetComponent<Animator>();
     }
-     
+
     void Update() {
         //////////////////////////////////////////
         // Player Movement
+
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_water)) {
+            if (angle > 110 || angle < 70) {
+                if (!Input.GetMouseButton(1)) m_health -= m_healthWaterDamage * Time.deltaTime;
+            }
+        }
 
         //* ---- Movement ---- */
         m_grounded = Physics2D.OverlapCircle(m_groundCheck.position, m_groundRadius, m_groundLayer);
@@ -82,7 +91,7 @@ public class Player : MonoBehaviour {
             m_rigidbody2D.constraints = RigidbodyConstraints2D.FreezeRotation;
             transform.Rotate(new Vector3(0, 0, 0));
         }
-        
+
         /* ----  Ladder climbing ---- */
         if (Input.GetKey(KeyCode.W) && m_collidingLadder) { // UP
             transform.Translate(transform.up * m_ladderSpeed * Time.deltaTime);
@@ -106,7 +115,7 @@ public class Player : MonoBehaviour {
 
         /* ---- Player Flipping ---- */
         if (angle < 90 && angle > -90) {
-           // m_arm.GetComponent<SpriteRenderer>().flipY = m_fliped = false;
+            // m_arm.GetComponent<SpriteRenderer>().flipY = m_fliped = false;
 
             Vector3 scale = m_graphics.transform.localScale;
             scale.x = 1;
@@ -114,7 +123,7 @@ public class Player : MonoBehaviour {
 
             //m_body.GetComponent<SpriteRenderer>().flipX = false;
         } else {
-           // m_arm.GetComponent<SpriteRenderer>().flipY = m_fliped = true;
+            // m_arm.GetComponent<SpriteRenderer>().flipY = m_fliped = true;
 
             Vector3 scale = m_graphics.transform.localScale;
             scale.x = -1;
@@ -129,6 +138,10 @@ public class Player : MonoBehaviour {
         }
 
         //////////////////////////////////////////
+    }
+
+    void OnGUI() {
+        GUI.Label(new Rect(10, 50, 100, 100), "Health: " + Mathf.RoundToInt(m_health));
     }
 
     void OnDrawGizmos() {
