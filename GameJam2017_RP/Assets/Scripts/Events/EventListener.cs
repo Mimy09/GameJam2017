@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EventListener : MonoBehaviour
 {
-    // variables [public]
-    public Event m_event = Event.NONE;
     // variables [private]
     private EventListener m_listener = null;
 
@@ -21,12 +19,6 @@ public class EventListener : MonoBehaviour
             // store listener
             m_listener = listener;
         }
-    }
-
-    public void SendEvent()
-    {
-        // send stored event
-        SendEvent(m_event);
     }
 
     public void SendEvent(Event e)
