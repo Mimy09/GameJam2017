@@ -55,6 +55,7 @@ public class Weapon : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1)) {
             if (m_ammo > 0) {
                 m_ammo -= 1;
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<AudioManager>().PlayClip(1);
                 GameObject temp = Instantiate(m_bullet, transform.position, Quaternion.Euler(0, 0, m_ply.ArmAngle - 90));
                 temp.GetComponent<Rigidbody2D>().AddForce(temp.transform.up * m_bulletForce, ForceMode2D.Impulse);
             }

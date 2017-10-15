@@ -102,12 +102,15 @@ public class AudioManager : MonoBehaviour
     public void PlayClip(AudioClip clip)
     {
         // instantiate new object
-        GameObject instanceOBJ = Instantiate(new GameObject(), transform);
+        GameObject test = new GameObject();
+        GameObject instanceOBJ = Instantiate(test, transform);
         // attach audio clip to object
         AudioSource source = instanceOBJ.AddComponent<AudioSource>();
         source.clip = clip;
+        source.Play();
         // delete object by audio time
-        Destroy(instanceOBJ, clip.length);
+        Destroy(test, clip.length);
+        Destroy(instanceOBJ.gameObject, clip.length);
     }
 
     public void PlayNextClip(int index)
