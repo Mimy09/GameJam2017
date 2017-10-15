@@ -7,16 +7,17 @@ public class Bucket : MonoBehaviour
     public int m_waterLimit = 5;
     public bool m_isComplete = false;
     public Door m_lockedDoorScript = null;
+
+    public SpriteRenderer m_graphics;
+    public Sprite m_bucketFull;
     
     void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("sup!");
         // check if complete
         if (m_isComplete) return;
         // check for player bullet
         if (collider.tag == "Bullet")
         {
-            Debug.Log("YESSSSSSSS!");
             // update values
             m_waterLimit--;
             // check if empty
@@ -26,6 +27,8 @@ public class Bucket : MonoBehaviour
                 m_isComplete = true;
                 // unlock the door
                 m_lockedDoorScript.m_isUnlocked = true;
+
+                m_graphics.sprite = m_bucketFull;
             }
         }
     }

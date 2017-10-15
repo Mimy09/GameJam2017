@@ -28,12 +28,16 @@ public class Player : MonoBehaviour {
     public LayerMask m_water;
     public LayerMask m_toxicWater;
     public LayerMask m_toxicWaterPool;
+    public LayerMask m_BossRoomCheck;
+    public LayerMask m_EndGameCheck;
     public Transform m_groundCheck;
     public float m_groundRadius = 0.2f;
     public GameObject m_graphics;
     public Vector2 m_wallCollider;
     public float m_wallColliderOffst;
-
+    public Door m_bossDoor;
+    public Door m_endDoor;
+    public Enemy m_boss;
     public RectTransform m_healthBar;
     //////////////////////////////////////////
 
@@ -47,8 +51,12 @@ public class Player : MonoBehaviour {
     private bool m_collidingLeft = false;
     private bool m_collidingLadder = false;
     private bool m_fliped = false;
+    private bool m_isDead = false;
+    private bool m_isInBossRoom = false;
+    private bool m_isFinished = false;
     private float move;
-    public float angle;
+    private float angle;
+    private GameObject m_canvas;
     //////////////////////////////////////////
 
     public float ArmAngle {
@@ -59,6 +67,7 @@ public class Player : MonoBehaviour {
         // Get the rigidbody
         m_rigidbody2D = this.GetComponent<Rigidbody2D>();
         m_animator = m_body.GetComponent<Animator>();
+        m_canvas = GameObject.FindGameObjectWithTag("Canvas");
     }
 
     void Update() {
@@ -71,8 +80,23 @@ public class Player : MonoBehaviour {
         if (Physics2D.OverlapCircle(m_groundCheck.position - transform.up * 1.5f, m_groundRadius) && m_rigidbody2D.velocity.y < m_damageVelocity) {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-        if (m_health <= 0) {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (m_health <= 0 && !m_isDead) {
+            m_isDead = true;
+            if (m_isInBossRoom) {
+                m_canvas.GetComponent<CanvasListener>().m_speed = 0.5f;
+                m_canvas.GetComponent<CanvasListener>().HandleEvent(Event.FADEOUT);
+            } else {
+                m_canvas.GetComponent<CanvasListener>().m_speed = 1;
+                m_canvas.GetComponent<CanvasListener>().HandleEvent(Event.GAMEOVER);
+            }
+        }
+
+        if (m_isInBossRoom && m_canvas.GetComponent<CanvasListener>().m_animationDone && m_isDead) {
+            transform.position = GameObject.FindGameObjectWithTag("Respawn").transform.position;
+            m_health = 100;
+            m_isDead = false;
+            m_bossDoor.m_isUnlocked = true;
+            m_canvas.GetComponent<CanvasListener>().HandleEvent(Event.FADEIN);
         }
 
         if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_toxicWaterPool)) {
@@ -84,6 +108,22 @@ public class Player : MonoBehaviour {
             } else {
                 m_health -= m_healthWaterDamage * Time.deltaTime;
             }
+        }
+
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_BossRoomCheck)) {
+            m_canvas.GetComponent<BossHealth>().EnableBossBar = true;
+            m_bossDoor.m_isUnlocked = false;
+            m_isInBossRoom = true;
+        }
+
+        if (m_boss.m_health <= 0) {
+            m_endDoor.m_isUnlocked = true;
+        }
+
+        if (Physics2D.OverlapBox(transform.position, new Vector2(0.8f, 1), 0, m_EndGameCheck) && !m_isFinished) {
+            m_isFinished = true;
+            m_canvas.GetComponent<CanvasListener>().m_speed = 8;
+            m_canvas.GetComponent<CanvasListener>().HandleEvent(Event.GAMEOVER);
         }
 
         //* ---- Movement ---- */

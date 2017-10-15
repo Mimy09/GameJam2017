@@ -44,6 +44,16 @@ public class Door : MonoBehaviour
                 transform.position = m_targetPosition;
             }
         }
+        else if (m_isOpen && !m_isUnlocked)
+        {
+            // set boolean
+            m_isOpen = false;
+            m_isAnimationFinished = false;
+            // calculate animation info
+            m_frameCount = m_speed - m_frameCount;
+            m_targetPosition = m_position1;
+            m_offset = (m_position1 - transform.position) / m_frameCount;
+        }
 	}
 
     void OnTriggerExit2D(Collider2D collider)
