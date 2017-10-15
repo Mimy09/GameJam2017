@@ -8,7 +8,6 @@ public class Enemy : MonoBehaviour
     public float m_speed = 3.0f;
     public float m_damage = 25.0f;
     public float m_health = 100.0f;
-    public bool m_displayHealth = false;
     public bool m_collisionResult = false;
     public float m_collisonRadius = 0.5f;
     public float m_collisonOffsetX = 1.5f;
@@ -33,7 +32,7 @@ public class Enemy : MonoBehaviour
             m_moveDirection = -m_moveDirection;
             // update collision position
             m_colliderPosition.x = -m_colliderPosition.x;
-            // flip transform local scale
+
             Vector3 scale = transform.localScale;
             scale.x = -scale.x;
             transform.localScale = scale;
@@ -57,9 +56,9 @@ public class Enemy : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = m_moveDirection < 0 ? Color.white : Color.red;
+        Gizmos.color = m_moveDirection < 0 ? Color.magenta : Color.red;
         Gizmos.DrawWireSphere(new Vector3(m_collisonOffsetX, m_collisonOffsetY, 0) + transform.position, m_collisonRadius);
-        Gizmos.color = m_moveDirection < 0 ? Color.red : Color.white;
+        Gizmos.color = m_moveDirection < 0 ? Color.red : Color.magenta;
         Gizmos.DrawWireSphere(new Vector3(-m_collisonOffsetX, m_collisonOffsetY, 0) + transform.position, m_collisonRadius);
     }
 
