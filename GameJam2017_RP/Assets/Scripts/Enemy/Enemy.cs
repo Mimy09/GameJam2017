@@ -32,6 +32,10 @@ public class Enemy : MonoBehaviour
             m_moveDirection = -m_moveDirection;
             // update collision position
             m_colliderPosition.x = -m_colliderPosition.x;
+
+            Vector3 scale = transform.localScale;
+            scale.x = -scale.x;
+            transform.localScale = scale;
         }
         else
         {
