@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,6 +10,7 @@ public class CanvasListener : EventListener
     public float m_speed = 5.0f;
     public Image m_backgroundBlack;
     // variables [private]
+    private Event m_currentEvent;
     private bool m_animationDone;
     private float m_animationCount;
     private float m_animationOffset;
@@ -19,10 +21,13 @@ public class CanvasListener : EventListener
     void Start()
     {
         // initialize variables
+        m_currentEvent = Event.NONE;
         m_animationDone = true;
         m_animationTarget = 0.0f;
         m_animationValue2 = 0.0f;
         m_animationValue1 = m_backgroundBlack.color.a;
+
+        HandleEvent(Event.START);
     }
 
     // Update is called once per frame
@@ -47,6 +52,12 @@ public class CanvasListener : EventListener
                 Color color = m_backgroundBlack.color;
                 color.a = m_animationTarget;
                 m_backgroundBlack.color = color;
+                // check if gameover
+                if (m_currentEvent == Event.GAMEOVER)
+                {
+                    // restart
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                }
             }
         }
     }
@@ -56,10 +67,19 @@ public class CanvasListener : EventListener
         switch(e)
         {
             case Event.START:
+            case Event.RESTART:
                 m_animationDone = false;
                 m_animationCount = m_speed - m_animationCount;
                 m_animationOffset = (m_animationValue2 - m_backgroundBlack.color.a) / m_animationCount;
                 break;
+            case Event.DEATH:
+            case Event.GAMEOVER:
+                m_animationDone = false;
+                m_animationCount = m_speed - m_animationCount;
+                m_animationOffset = (m_animationValue1 - m_backgroundBlack.color.a) / m_animationCount;
+                break;
         }
+        // store event
+        m_currentEvent = e;
     }
 }

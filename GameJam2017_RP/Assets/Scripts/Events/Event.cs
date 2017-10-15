@@ -2,6 +2,7 @@
 {
     NONE,
     START,
+    DEATH,
     RESTART,
     GAMEOVER,
 }
